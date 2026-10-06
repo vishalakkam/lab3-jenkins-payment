@@ -45,5 +45,21 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+    steps {
+        bat '''
+            "%DOCKER%" stop payment >nul 2>&1 || echo No existing payment container
+            "%DOCKER%" rm payment >nul 2>&1 || echo No existing payment container
+
+            "%DOCKER%" run -d ^
+              --name payment ^
+              -p 8080:80 ^
+              localhost:5000/%IMAGE%:%TAG%
+
+            "%DOCKER%" ps --filter "name=payment"
+        '''
+    }
+}
     }
 }
