@@ -15,5 +15,16 @@ pipeline {
                 '''
             }
         }
+
+        stage('Test') {
+            steps {
+                bat '''
+                    "%DOCKER%" run --name payment-test -d %IMAGE%:%TAG%
+                    "%DOCKER%" ps --filter "name=payment-test"
+                    "%DOCKER%" stop payment-test
+                    "%DOCKER%" rm payment-test
+                '''
+            }
+        }
     }
 }
