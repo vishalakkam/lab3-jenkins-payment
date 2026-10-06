@@ -26,5 +26,14 @@ pipeline {
                 '''
             }
         }
+
+        stage('Tag') {
+            steps {
+                bat '''
+                    "%DOCKER%" tag %IMAGE%:%TAG% %IMAGE%:build-%TAG%
+                    "%DOCKER%" images %IMAGE%
+                '''
+            }
+        }
     }
 }
