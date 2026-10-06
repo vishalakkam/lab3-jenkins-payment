@@ -10,13 +10,20 @@ pipeline {
     stages {
 
         stage('Build') {
-            steps {
-                bat '''
-                    "%DOCKER%" build -t %IMAGE%:%TAG% .
-                '''
-            }
-        }
+    steps {
+        bat '''
+            echo Jenkins Build: %BUILD_NUMBER%
+            echo Git Commit: %GIT_COMMIT%
+            echo Branch: %BRANCH_NAME%
 
+            "%DOCKER%" build ^
+              --label "jenkins.build=%BUILD_NUMBER%" ^
+              --label "git.commit=%GIT_COMMIT%" ^
+              --label "git.branch=%BRANCH_NAME%" ^
+              -t %IMAGE%:%TAG% .
+        '''
+    }
+}
         stage('Test') {
             steps {
                 bat '''
