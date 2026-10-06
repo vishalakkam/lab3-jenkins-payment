@@ -8,6 +8,7 @@ pipeline {
     }
 
     stages {
+
         stage('Build') {
             steps {
                 bat '''
@@ -31,16 +32,18 @@ pipeline {
             steps {
                 bat '''
                     "%DOCKER%" tag %IMAGE%:%TAG% %IMAGE%:build-%TAG%
-                    "%DOCKER%" images %IMAGE%
+                    "%DOCKER%" tag %IMAGE%:%TAG% localhost:5000/%IMAGE%:%TAG%
+                    "%DOCKER%" images
                 '''
             }
         }
+
         stage('Push') {
-    steps {
-        bat '''
-            "%DOCKER%" push localhost:5000/%IMAGE%:%TAG%
-        '''
-    }
-}
+            steps {
+                bat '''
+                    "%DOCKER%" push localhost:5000/%IMAGE%:%TAG%
+                '''
+            }
+        }
     }
 }
