@@ -43,5 +43,47 @@ pipeline {
         stage('Tag') {
             steps {
                 bat '''
-                    "%DOCKER%" tag %IMAGE%:%TA
+                    "%DOCKER%" tag %IMAGE%:%TAG% %IMAGE%:build-%TAG%
+
+                    "%DOCKER%" tag %IMAGE%:%TAG% localhost:5000/mycompany/payment:%TAG%
+
+                    "%DOCKER%" images
+                '''
+            }
+        }
+
+        stage('Push') {
+            steps {
+                bat '''
+                    "%DOCKER%" push localhost:5000/mycompany/payment:%TAG%
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                bat '''
+                    echo ========================================
+                    echo Application Version: %TAG%
+                    echo Git Commit: %GIT_COMMIT%
+                    echo Docker Image: %IMAGE%:%TAG%
+                    echo Jenkins Build: %BUILD_NUMBER%
+                    echo Branch: main
+                    echo ========================================
+
+                    "%DOCKER%" stop payment >nul 2>&1 || echo No existing payment container
+
+                    "%DOCKER%" rm payment >nul 2>&1 || echo No existing payment container
+
+                    "%DOCKER%" run -d ^
+                      --name payment ^
+                      -p 8080:80 ^
+                      localhost:5000/mycompany/payment:%TAG%
+
+                    "%DOCKER%" ps --filter "name=payment"
+                '''
+            }
+        }
+    }
+}
 ```
