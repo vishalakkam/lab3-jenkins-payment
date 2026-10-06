@@ -6,14 +6,14 @@ pipeline {
         TAG = "${BUILD_NUMBER}"
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                bat '''
-                    docker build -t $IMAGE:$TAG .
-                '''
-            }
-        }
+    stage('Build') {
+    steps {
+        bat '''
+            where docker
+            docker --version
+        '''
+    }
+}
 
         stage('Test') {
             steps {
