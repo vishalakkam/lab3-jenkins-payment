@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh '''
+                bat '''
                     docker build -t $IMAGE:$TAG .
                 '''
             }
@@ -17,7 +17,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh '''
+                bat '''
                     docker run $IMAGE:$TAG pytest
                 '''
             }
@@ -25,7 +25,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '''
+             bat '''
                     docker stop payment || true
                     docker rm payment || true
 
