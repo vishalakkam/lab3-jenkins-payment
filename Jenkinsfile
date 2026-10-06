@@ -35,5 +35,12 @@ pipeline {
                 '''
             }
         }
+        stage('Push') {
+    steps {
+        bat '''
+            "%DOCKER%" push localhost:5000/%IMAGE%:%TAG%
+        '''
+    }
+}
     }
 }
